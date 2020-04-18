@@ -64,8 +64,8 @@ delete = undefined
 keys :: TTree k v -> [[k]]
 keys E                = []
 keys (Leaf k v)       = [[k]]
-keys (Node k Nothing i m d) = (keys i) ++ map (k:) (keys m) ++ (keys d)
-keys (Node k (Just _) i m d) = (keys i) ++ map (k:) (keys m) ++ (keys d) ++ [[k]]
+keys (Node k v i m d) = (keys i) ++ map (k:) (keys m) ++ (keys d) ++ (case v of Nothing -> []
+                                                                                Just _ -> [[k]])
 
 ttreeToTree :: (Show k, Show v) => TTree k v -> Data.Tree.Tree [Char]
 ttreeToTree E = Data.Tree.Node "" []
