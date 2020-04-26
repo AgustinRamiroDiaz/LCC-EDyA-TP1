@@ -85,9 +85,9 @@ delete :: Ord k => [k] -> TTree k v -> TTree k v
 delete clave E = E
 delete [caracter] l@(Leaf k v) = if caracter == k then E else l
 delete (caracter:clave) l@(Leaf _ _) = l
-delete [caracter] (Node k v i E d) | caracter == k = merge i d
-                                   | caracter < k = cleanup (Node k v (delete [caracter] i) E d)
-                                   | caracter > k = cleanup (Node k v i E (delete [caracter] d))
+delete [caracter] (Node k v@(Just _) i E d) | caracter == k = merge i d
+                                            | caracter < k = cleanup (Node k v (delete [caracter] i) E d)
+                                            | caracter > k = cleanup (Node k v i E (delete [caracter] d))
 delete [caracter] (Node k v i m d) | caracter == k = Node k Nothing i m d
                                    | caracter < k = Node k v (delete [caracter] i) m d
                                    | caracter > k = Node k v i m (delete [caracter] d)
