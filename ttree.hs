@@ -12,10 +12,11 @@ class Dic k v d | d -> k v where
   eliminar :: Ord k => k -> d -> d
   claves :: Ord k => d -> [k]
 
--- invariantes:
--- Ningún TTree es un Node k Nothing i E d
--- Ningún TTree es un Node k v E E E
--- TODO: faltan invariantes (orden de claves por ej)
+-- Aparte de las invariantes propuestas por la definición supusimos:
+--    Ningún TTree es un Node k Nothing i E d
+--    Ningún TTree es un Node k v E E E
+-- Estas invariantes nos ayudan para simplificar la limpieza de nodos basura
+-- en el árbol al momento de utilizar la función delete
 data TTree k v = Node k (Maybe v) (TTree k v) (TTree k v) (TTree k v) | Leaf k v | E
 
 instance Ord k => Dic [k] v (TTree k v) where
@@ -68,14 +69,14 @@ insert s@(caracter:clave) valor (Node k v i m d) | caracter == k = Node k v i (i
                                                  | caracter < k = Node k v (insert s valor i) m d
                                                  | caracter > k = Node k v i m (insert s valor d)
 
--- merge :: TODO: completar
+-- merge :: Une 2 árboles poniendo el segundo árbol a la derecha del primero
 merge :: TTree k v -> TTree k v -> TTree k v
 merge E d = d
 merge i E = i
 merge (Leaf k v) d = Node k (Just v) E E d
 merge (Node k v i m d) d2 = Node k v i m (merge d d2)
 
--- cleanup :: TODO: completar
+-- cleanup :: Dado un nodo le quita los subárboles si los 3 son E
 cleanup :: TTree k v -> TTree k v
 cleanup (Node k (Just v) E E E) = Leaf k v
 cleanup n@(Node k (Just v) _ _ _) = n
